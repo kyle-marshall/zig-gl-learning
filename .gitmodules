@@ -1,0 +1,9 @@
+[submodule "ref/mach-glfw"]
+	path = ref/mach-glfw
+	url = https://github.com/hexops/mach-glfw.git
+[submodule "ref/zigimg"]
+	path = ref/zigimg
+	url = https://github.com/zigimg/zigimg.git
+[submodule "ref/zig-opengl"]
+	path = ref/zig-opengl
+	url = https://github.com/MasterQ32/zig-opengl.git
