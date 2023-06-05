@@ -9,8 +9,8 @@ pub fn load(
     vertex_shader_path: []const u8,
     fragment_shader_path: []const u8,
 ) !Self {
-    var vertex_shader: u32 = try loadShader(allocator, vertex_shader_path, gl.VERTEX_SHADER);
-    var fragment_shader: u32 = try loadShader(allocator, fragment_shader_path, gl.FRAGMENT_SHADER);
+    const vertex_shader: u32 = try loadShader(allocator, vertex_shader_path, gl.VERTEX_SHADER);
+    const fragment_shader: u32 = try loadShader(allocator, fragment_shader_path, gl.FRAGMENT_SHADER);
 
     var shader_program: u32 = undefined;
     shader_program = gl.createProgram();
@@ -24,32 +24,34 @@ pub fn load(
     };
 }
 
-pub fn deinit(self: *Self) void {
+pub fn deinit(self: Self) void {
     gl.deleteProgram(self.id);
 }
 
 fn loadShader(allocator: std.mem.Allocator, path: []const u8, shader_type: u32) !u32 {
-    var cwd = std.fs.cwd();
-    var shader_file = try cwd.openFile(path, .{ .mode = .read_only });
-    var shader_file_size = (try shader_file.stat()).size;
-    var shader_src_buff = try allocator.alloc(u8, shader_file_size);
+    const cwd = std.fs.cwd();
+    const shader_file = try cwd.openFile(path, .{ .mode = .read_only });
+    const shader_file_size = (try shader_file.stat()).size;
+    const shader_src_buff = try allocator.alloc(u8, shader_file_size);
     defer allocator.free(shader_src_buff);
     try shader_file.reader().readNoEof(shader_src_buff);
-    var shader: u32 = gl.createShader(shader_type);
-    var _string = @ptrCast([*c]const [*c]const u8, &shader_src_buff);
+    const shader: u32 = gl.createShader(shader_type);
+    const _string = @ptrCast([*c]const [*c]const u8, &shader_src_buff);
     gl.shaderSource(shader, 1, _string, null);
     gl.compileShader(shader);
     check_shader_compilation(shader);
     return shader;
 }
 
+const INFO_LOG_BUFF_SIZE: usize = 1024;
+
 fn check_shader_compilation(shader: u32) void {
     var success: i32 = undefined;
     gl.getShaderiv(shader, gl.COMPILE_STATUS, &success);
     if (success == 0) {
-        var info_log: [512]u8 = undefined;
+        var info_log: [INFO_LOG_BUFF_SIZE]u8 = undefined;
         @memset(&info_log, 0);
-        gl.getShaderInfoLog(shader, 512, null, &info_log);
+        gl.getShaderInfoLog(shader, INFO_LOG_BUFF_SIZE, null, &info_log);
         std.log.err("shader compilation failed:\n{s}\n", .{info_log});
         unreachable;
     }
@@ -60,34 +62,34 @@ fn check_program_linking(program: u32) void {
     var success: i32 = undefined;
     gl.getProgramiv(program, gl.LINK_STATUS, &success);
     if (success == 0) {
-        var info_log: [512]u8 = undefined;
+        var info_log: [INFO_LOG_BUFF_SIZE]u8 = undefined;
         @memset(&info_log, 0);
-        gl.getProgramInfoLog(program, 512, null, &info_log);
+        gl.getProgramInfoLog(program, INFO_LOG_BUFF_SIZE, null, &info_log);
         std.log.err("shader program linking failed:\n{s}\n", .{info_log});
         unreachable;
     }
     std.debug.print("shader program linked successfully\n", .{});
 }
 
-pub fn use(self: *Self) void {
+pub fn use(self: Self) void {
     gl.useProgram(self.id);
 }
 
-pub fn setBool(self: *Self, name: [*c]const u8, value: bool) void {
+pub fn setBool(self: Self, name: [*c]const u8, value: bool) void {
     gl.uniform1i(
         gl.getUniformLocation(self.id, name),
         @boolToInt(value),
     );
 }
 
-pub fn setInt(self: *Self, name: [*c]const u8, value: i32) void {
+pub fn setInt(self: Self, name: [*c]const u8, value: i32) void {
     gl.uniform1i(
         gl.getUniformLocation(self.id, name),
         value,
     );
 }
 
-pub fn setFloat(self: *Self, name: [*c]const u8, value: f32) void {
+pub fn setFloat(self: Self, name: [*c]const u8, value: f32) void {
     gl.uniform1f(
         gl.getUniformLocation(self.id, name),
         value,

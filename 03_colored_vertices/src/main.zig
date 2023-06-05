@@ -1,9 +1,8 @@
 //! Based on 1st half of https://learnopengl.com/Getting-started/Shaders
+
 const std = @import("std");
 const glfw = @import("glfw");
 const gl = @import("gl");
-
-const log = std.log.scoped(.Engine);
 
 fn glGetProcAddress(p: glfw.GLProc, proc: [:0]const u8) ?gl.FunctionPointer {
     _ = p;
@@ -165,7 +164,7 @@ pub fn main() !void {
 
     // Wait for the user to close the window.
     while (!window.shouldClose()) {
-        var elapsed_seconds = glfw.getTime();
+        const elapsed_seconds = glfw.getTime();
 
         glfw.pollEvents();
 
@@ -176,8 +175,8 @@ pub fn main() !void {
         gl.clearColor(0.2, 0.3, 0.3, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        var green_value: f32 = (@floatCast(f32, std.math.sin(elapsed_seconds)) / 2.0) + 0.5;
-        var vertex_color_location = gl.getUniformLocation(shader_program, "ourColor");
+        const green_value: f32 = (@floatCast(f32, std.math.sin(elapsed_seconds)) / 2.0) + 0.5;
+        const vertex_color_location = gl.getUniformLocation(shader_program, "ourColor");
 
         gl.useProgram(shader_program);
         // shader program must be used before setting uniforms

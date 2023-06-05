@@ -7,8 +7,6 @@ const gl = @import("gl");
 const Shader = @import("Shader.zig");
 const Tex = @import("Tex.zig");
 
-const log = std.log.scoped(.Engine);
-
 fn glGetProcAddress(p: glfw.GLProc, proc: [:0]const u8) ?gl.FunctionPointer {
     _ = p;
     return glfw.getProcAddress(proc);
@@ -63,8 +61,8 @@ pub fn main() !void {
     // SHADER SETUP
     // ------------
 
-    var allocator = std.heap.c_allocator;
-    var cool_shader = try Shader.load(
+    const allocator = std.heap.c_allocator;
+    const cool_shader = try Shader.load(
         allocator,
         "shaders/cool.vs",
         "shaders/cool.fs",
@@ -165,8 +163,8 @@ pub fn main() !void {
     const tex0_path = "img/sand-tile-32.png";
     const tex1_path = "img/weird-egg.png";
 
-    var tex0 = try Tex.load(allocator, tex0_path);
-    var tex1 = try Tex.load(allocator, tex1_path);
+    const tex0 = try Tex.load(allocator, tex0_path);
+    const tex1 = try Tex.load(allocator, tex1_path);
 
     // the following line can render wireframe polygons.
     // gl.polygonMode(gl.FRONT_AND_BACK, gl.LINE);

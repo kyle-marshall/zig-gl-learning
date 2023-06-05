@@ -5,8 +5,6 @@ const glfw = @import("glfw");
 const gl = @import("gl");
 const Shader = @import("Shader.zig");
 
-const log = std.log.scoped(.Engine);
-
 fn glGetProcAddress(p: glfw.GLProc, proc: [:0]const u8) ?gl.FunctionPointer {
     _ = p;
     return glfw.getProcAddress(proc);
@@ -61,8 +59,8 @@ pub fn main() !void {
     // SHADER SETUP
     // ------------
 
-    var allocator = std.heap.page_allocator;
-    var cool_shader = try Shader.load(
+    const allocator = std.heap.page_allocator;
+    const cool_shader = try Shader.load(
         allocator,
         "shaders/cool.vs",
         "shaders/cool.fs",
@@ -148,7 +146,7 @@ pub fn main() !void {
     // Wait for the user to close the window.
     var x_offset: f32 = 0.0;
     while (!window.shouldClose()) {
-        var elapsed_seconds = glfw.getTime();
+        const elapsed_seconds = glfw.getTime();
 
         glfw.pollEvents();
 
